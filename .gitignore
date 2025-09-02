@@ -66,4 +66,4 @@ coverage/
 *.temp
 
 # Storage files (if they contain sensitive data)
-storage/
+# storage/
