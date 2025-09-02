@@ -67,3 +67,10 @@ coverage/
 
 # Storage files (if they contain sensitive data)
 # storage/
+
+# Large files
+*.pptx
+*.ppt
+*.xlsx
+*.xls
+*.pdf
