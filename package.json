@@ -1,0 +1,13 @@
+{
+  "name": "jzjc20250902",
+  "version": "1.0.0",
+  "description": "检测应用项目 - 合同和报告管理系统",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
