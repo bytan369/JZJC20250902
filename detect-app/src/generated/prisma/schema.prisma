@@ -1,0 +1,134 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Org {
+  id        String     @id @default(cuid())
+  name      String
+  users     User[]
+  projects  Project[]
+  contracts Contract[]
+  reports   Report[]
+  createdAt DateTime   @default(now())
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  FINANCE
+  QA
+  SALESPM
+  READONLY
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Org      @relation(fields: [orgId], references: [id])
+  name      String
+  createdAt DateTime @default(now())
+}
+
+model Contract {
+  id          String         @id @default(cuid())
+  orgId       String
+  org         Org            @relation(fields: [orgId], references: [id])
+  customer    String
+  projectName String
+  totalAmount Float
+  currency    String
+  status      ContractStatus
+  signedDate  DateTime?
+  startDate   DateTime?
+  endDate     DateTime?
+  arAmount    Float          @default(0)
+  paidAmount  Float          @default(0)
+  filePath    String
+  text        String
+  metaJson    String
+  payments    Payment[]
+  reports     Report[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+enum ContractStatus {
+  FOLLOW_UP
+  SIGNED
+  EXECUTING
+  DONE
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  contractId String
+  contract   Contract @relation(fields: [contractId], references: [id])
+  amount     Float
+  paidDate   DateTime
+  note       String?
+}
+
+model Report {
+  id          String      @id @default(cuid())
+  orgId       String
+  org         Org         @relation(fields: [orgId], references: [id])
+  contractId  String?
+  contract    Contract?   @relation(fields: [contractId], references: [id])
+  reportNo    String
+  sampleDate  DateTime?
+  receiveDate DateTime?
+  issueDate   DateTime?
+  filePath    String
+  text        String
+  findings    QAFinding[]
+  createdAt   DateTime    @default(now())
+}
+
+model StandardDoc {
+  id        String   @id @default(cuid())
+  title     String
+  filePath  String
+  text      String
+  createdAt DateTime @default(now())
+  deleted   Boolean  @default(false)
+}
+
+model QAFinding {
+  id        String   @id @default(cuid())
+  reportId  String
+  report    Report   @relation(fields: [reportId], references: [id])
+  type      String
+  detail    String
+  severity  String
+  createdAt DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  payload   String
+  createdAt DateTime @default(now())
+}
